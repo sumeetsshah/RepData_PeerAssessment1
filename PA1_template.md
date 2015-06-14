@@ -295,6 +295,7 @@ Combine the datasets into one easily usable by the ggplot2 package and decare th
 
 ```r
 compareActivity<-rbind(wkndStepsByInterval, wkdyStepsByInterval)
+compareActivity$interval<-as.numeric(compareActivity$interval)
 compareActivity$day.type <- factor(compareActivity$day.type,levels=c("weekend", "weekday"),
                       labels=c("weekend", "weekday"))
 ```
@@ -302,11 +303,17 @@ compareActivity$day.type <- factor(compareActivity$day.type,levels=c("weekend", 
 Plot the data sets as time series using the ggplot2 plotting system.
 
 ```r
-qplot(as.numeric(row.names(compareActivity)), compareActivity$steps,data = compareActivity, facets = day.type~. , geom = "line", xlab = "Interval", ylab = "Mean Steps Taken", main = "Comparison of Mean Steps per Interval: Weekends vs. Weekdays")
+panelPlot<-ggplot(compareActivity, 
+                  aes(x = interval, y = steps, group = day.type, main = "Title"))
+panelPlot <- panelPlot + ggtitle("Weekday vs. Weekend Mean Steps Taken")
+panelPlot <- panelPlot + facet_grid(day.type ~.)
+panelPlot <- panelPlot + geom_line() 
+
+panelPlot
 ```
 
 ![](figure/panelPlot-1.png) 
 
-The plot shows us that there is on average much fewer steps taken on weekends, and what steps are taken are confined to a few intervals soon after midnight, while weekday activity is much greater and spread throughout the day.
+The plot shows us that on average, the weekend activity peaks early in the day, while activity is much more constant throughout the day during weekdays.
 
 
